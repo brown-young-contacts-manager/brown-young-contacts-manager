@@ -36,32 +36,56 @@ public class Application {
                 case 1:
                     System.out.println("placeholder for contacts");
                     break;
-                case 2:
+                case 2: // ADD CONTACT
                     System.out.println("Enter new contact name: ");
-                    String n = scanner.nextLine();
+                    String name = scanner.nextLine();
 
-                    System.out.printf("Enter %s phone number:\n", n);
-                    long p = scanner.nextLong();
-                    contacts = Arrays.asList(n + " | " + p);
+                    System.out.printf("Enter %s phone number:\n", name);
+                    long phone = scanner.nextLong();
+                    contacts = Arrays.asList(name + " | " + phone);
                     Files.write(textPath, contacts, StandardOpenOption.APPEND);
                     break;
-                case 3:
+                case 3: // SEARCH CONTACTS - NAME ONLY
                     System.out.println("What is your contact's name?: ");
-                    n = scanner.nextLine();
+                    name = scanner.nextLine();
                     break;
-                case 4:
+                case 4: // DELETE CONTACTS
                     System.out.println("Enter contact name to delete: ");
-                    n = scanner.nextLine();
+                    name = scanner.nextLine();
                     System.out.println("Are you sure?: [y/n]");
                     String confirm = scanner.nextLine();
                     if (confirm.equalsIgnoreCase("Y")){
                         // delete the contact
+                        System.out.println(Files.readAllLines(textPath));
                     }
                     else {
                         Menu();
                     }
+                        contacts = Files.readAllLines(textPath);
+                        //Second: Let's set up a second array list to hold the updated list we want to write to the text file
+                        List<String> newContactsList = new ArrayList<>();
+
+
+                        //In English : Look inside of ONE LINE from ALL OF THESE LINES I got from my text file
+                        for (String line : contacts){
+
+                            if(line.contains(name)){
+                                newContactsList.remove(name);
+                                continue;
+                            }
+
+                            newContactsList.add(line);
+
+                        }
+
+//                        System.out.println("printGroceryList2 = " + contacts);
+//                        System.out.println("newContactsList = " + newContactsList);
+//                        contacts = newContactsList;
+//                        System.out.println("printGroceryList2 (overwrite experiment) = " + contacts);
+
+                        Files.write(textPath, newContactsList);
                     break;
-                case 5:
+                case 5: // EXIT
                     return;
                 default:
                     System.out.println("Invalid input!");
