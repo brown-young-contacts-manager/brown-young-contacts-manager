@@ -5,13 +5,15 @@ import java.nio.file.Paths;
 
 public class Application {
 
-    public static void runApplication() {
+    public static void runApplication() throws IOException {
         // creating directory and file for contact list
         String directory = "./src/contact";
         String contactList = "contacts.txt";
         // creating a path to directory and file
         Path textDirectory = Paths.get(directory);
         Path textPath = Paths.get(directory, contactList);
+        createDirectory(textDirectory);
+        createFile(textPath);
     }
     // Create Directory if needed
     public static void createDirectory(Path textDirectory) throws IOException {
@@ -22,7 +24,7 @@ public class Application {
     // Create file in directory if needed
     public static void createFile(Path textPath) throws IOException {
         if(Files.notExists(textPath)){
-            Files.createDirectories(textPath);
+            Files.createFile(textPath);
         }
     }
 
@@ -32,7 +34,8 @@ public class Application {
                 "4. Delete an existing contact\n5. Exit\nEnter an option (1, 2, 3, 4 or 5):");
     }
 
-    public static void main(String[] args) {
-        Menu();
+    public static void main(String[] args) throws IOException {
+//        Menu();
+        runApplication();
     }
 }
