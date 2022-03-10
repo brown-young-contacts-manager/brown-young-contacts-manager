@@ -20,11 +20,14 @@ public class Application {
         Path textDirectory = Paths.get(directory);
         Path textPath = Paths.get(directory, contactList);
         List<String> contacts;
+        boolean cont;
 
         createDirectory(textDirectory);
         createFile(textPath);
 
         System.out.println("Welcome....");
+
+        do {
             Menu();
 
             int input = scanner.nextInt();
@@ -38,8 +41,8 @@ public class Application {
                     String n = scanner.nextLine();
 
                     System.out.printf("Enter %s phone number:\n", n);
-                    long phoneInput = scanner.nextLong();
-                    contacts = Arrays.asList(n + " | " + phoneInput);
+                    long p = scanner.nextLong();
+                    contacts = Arrays.asList(n + " | " + p);
                     Files.write(textPath, contacts, StandardOpenOption.APPEND);
                     break;
                 case 3:
@@ -59,12 +62,14 @@ public class Application {
                     }
                     break;
                 case 5:
-                    System.out.println("powering off...");
                     return;
                 default:
                     System.out.println("Invalid input!");
-                    Menu();
             }
+            System.out.println("Do you wish to continue?: [y/n]");
+            cont = scanner.next().equalsIgnoreCase("Y");
+        } while (cont);
+        System.out.println("Powering off...");
     }
 
     // Create Directory if needed
