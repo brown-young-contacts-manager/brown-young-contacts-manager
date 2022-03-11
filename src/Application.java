@@ -3,9 +3,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.Format;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,7 +23,7 @@ public class Application {
         createDirectory(textDirectory);
         createFile(textPath);
 
-        System.out.println("Welcome....");
+        System.out.println("Welcome to your contacts manager...");
 
         do {
             Menu();
@@ -33,23 +31,27 @@ public class Application {
             int input = scanner.nextInt();
             scanner.nextLine();
             switch(input){
-                case 1:
-                    System.out.println("placeholder for contacts");
+                case 1: // VIEW ALL
+                    System.out.println();
+                    getContactsList(textPath);
                     break;
                 case 2: // ADD CONTACT
+                    System.out.println();
                     System.out.println("Enter new contact name: ");
                     String name = scanner.nextLine();
 
                     System.out.printf("Enter %s phone number:\n", name);
                     long phone = scanner.nextLong();
-                    contacts = Arrays.asList(name + " | " + phone);
+                    contacts = List.of(name + " | " + phone);
                     Files.write(textPath, contacts, StandardOpenOption.APPEND);
                     break;
                 case 3: // SEARCH CONTACTS - NAME ONLY
+                    System.out.println();
                     System.out.println("What is your contact's name?: ");
                     name = scanner.nextLine();
                     break;
                 case 4: // DELETE CONTACTS
+                    System.out.println();
                     System.out.println("Enter contact name to delete: ");
                     name = scanner.nextLine();
                     System.out.println("Are you sure?: [y/n]");
@@ -86,10 +88,14 @@ public class Application {
                         Files.write(textPath, newContactsList);
                     break;
                 case 5: // EXIT
+                    System.out.println();
+                    System.out.println("Powering off...");
                     return;
                 default:
-                    System.out.println("Invalid input!");
+                    System.out.println();
+                    System.out.println("Please select a valid option.");
             }
+            System.out.println();
             System.out.println("Do you wish to continue?: [y/n]");
             cont = scanner.next().equalsIgnoreCase("Y");
         } while (cont);
@@ -107,6 +113,14 @@ public class Application {
     public static void createFile(Path textPath) throws IOException {
         if (Files.notExists(textPath)) {
             Files.createFile(textPath);
+        }
+    }
+
+    // Retrieve contacts from text file
+    public static void getContactsList(Path textPath) throws IOException {
+        List<String> printList = Files.readAllLines(textPath);
+        for (String contact : printList) {
+            System.out.println(contact);
         }
     }
 
