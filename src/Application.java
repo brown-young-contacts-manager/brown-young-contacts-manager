@@ -49,6 +49,13 @@ public class Application {
                     System.out.println();
                     System.out.println("What is your contact's name?: ");
                     name = scanner.nextLine();
+
+                    contacts = Files.readAllLines(textPath);
+                    for (String line : contacts) {
+                        if (line.contains(name)) {
+                            System.out.println(line);
+                        }
+                    }
                     break;
                 case 4: // DELETE CONTACTS
                     System.out.println();
