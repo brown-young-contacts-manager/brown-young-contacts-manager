@@ -52,7 +52,7 @@ public class Application {
 
                     contacts = Files.readAllLines(textPath);
                     for (String line : contacts) {
-                        if (line.contains(name)) {
+                        if ((line.toLowerCase()).contains((name.toLowerCase()))) {
                             System.out.println(line);
                         }
                     }
@@ -64,17 +64,15 @@ public class Application {
                     System.out.println("Are you sure?: [y/n]");
                     String confirm = scanner.nextLine();
                     if (confirm.equalsIgnoreCase("Y")) {
-                        // delete the contact
                         System.out.println(Files.readAllLines(textPath));
                     } else {
                         Menu();
                     }
                     contacts = Files.readAllLines(textPath);
-                    //Second: Let's set up a second array list to hold the updated list we want to write to the text file
+
                     List<String> newContactsList = new ArrayList<>();
 
 
-                    //In English : Look inside of ONE LINE from ALL OF THESE LINES I got from my text file
                     for (String line : contacts) {
 
                         if (line.contains(name)) {
