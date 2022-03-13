@@ -1,3 +1,5 @@
+import com.sun.source.tree.Tree;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -6,6 +8,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class Application {
 
@@ -17,6 +20,7 @@ public class Application {
         // creating a path to directory and file
         Path textDirectory = Paths.get(directory);
         Path textPath = Paths.get(directory, contactList);
+        TreeMap<String, String> contactsMap = new TreeMap<>();
         List<String> contacts;
         boolean cont;
 
@@ -41,9 +45,59 @@ public class Application {
                     String name = scanner.nextLine();
 
                     System.out.printf("Enter %s phone number:\n", name);
-                    long phone = scanner.nextLong();
-                    contacts = List.of(name + " | " + phone);
-                    Files.write(textPath, contacts, StandardOpenOption.APPEND);
+                    long number = scanner.nextLong();
+                    int numLength = Long.toString(number).length(); // captures the int value of the string length
+                    char[] oldNumArr = Long.toString(number).toCharArray(); // turns number into char array
+                    StringBuilder newNumStr = new StringBuilder(); // used to set a new phone number string with "-"
+                    int firstTac = 0;
+                    int secondTac = 0;
+
+                    switch (numLength) {
+                        case 7: {
+                            for (int i = 0; i < oldNumArr.length; i++) {
+                                newNumStr.append(oldNumArr[i]);
+                                firstTac++;
+                                if (firstTac == 3) {
+                                    break;
+                                }
+                            }
+                            newNumStr.append("-");
+                            for (int i = 3; i < oldNumArr.length; i++) {
+                                newNumStr.append(oldNumArr[i]);
+                            }
+                            contactsMap.put(name, newNumStr.toString());
+                            List<String> test = List.of(name + " | " + newNumStr + " |");
+                            Files.write(textPath, test, StandardOpenOption.APPEND);
+                        }
+                        case 10: {
+                            for (int i = 0; i < oldNumArr.length; i++) {
+                                newNumStr.append(oldNumArr[i]);
+                                firstTac++;
+                                if (firstTac == 3) {
+                                    break;
+                                }
+                            }
+                            newNumStr.append("-");
+                            for (int i = 3; i < oldNumArr.length; i++) {
+                                newNumStr.append(oldNumArr[i]);
+                                secondTac++;
+                                if (secondTac == 3) {
+                                    break;
+                                }
+                            }
+                            newNumStr.append("-");
+                            for (int i = 6; i < oldNumArr.length; i++) {
+                                newNumStr.append(oldNumArr[i]);
+                            }
+                            contactsMap.put(name, newNumStr.toString());
+                            List<String> test = List.of(name + " | " + newNumStr + " |");
+                            Files.write(textPath, test, StandardOpenOption.APPEND);
+                        }
+                        default: // for some reason, always defaults WITH proper input.
+                            System.out.println("Loading...");
+                    }
+
+                    Files.readAllLines(textPath);
                     break;
                 case 3: // SEARCH CONTACTS - NAME ONLY
                     System.out.println();
