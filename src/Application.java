@@ -15,10 +15,10 @@ import util.Input;
 
 public class Application {
 //    static Path contactsPath = Paths.get(directory, contactList);
-    static Input input = new Input();
+    static Scanner input = new Scanner(System.in);
 
     public static void runApplication() throws IOException {
-        Scanner scanner = new Scanner(System.in);
+//        Input methodInput = new Input();
         // creating directory and file for contact list
         String directory = "./src/contact/";
         String contactList = "contacts.txt";
@@ -26,7 +26,6 @@ public class Application {
         Path contactDir = Paths.get(directory);
         Path contactPath = Paths.get(directory, contactList);
         TreeMap<String, String> contactsMap = new TreeMap<>();
-        List<String> contacts;
         boolean cont;
 
         createDirectory(contactDir);
@@ -38,18 +37,20 @@ public class Application {
         do {
             Menu();
 
-            int input = scanner.nextInt();
-            scanner.nextLine();
-            switch (input) {
+            int switchInput = input.nextInt();
+            input.nextLine();
+            switch (switchInput) {
                 case 1: // VIEW ALL
                     System.out.println();
                     getContactsList(contactPath);
                     break;
                 case 2: // ADD CONTACT
+                    System.out.println();
                     addContact(contactPath);
                     break;
                 case 3: // SEARCH CONTACTS - NAME ONLY
-//                    searchContacts();
+                    System.out.println();
+                    searchContacts(contactPath);
                     break;
                 case 4: // DELETE CONTACTS
 //                    System.out.println();
@@ -86,7 +87,8 @@ public class Application {
             }
             System.out.println();
             System.out.println("Do you wish to continue?: [y/n]");
-            cont = scanner.next().equalsIgnoreCase("Y");
+            cont = input.nextLine().equalsIgnoreCase("y");
+            System.out.println();
         } while (cont);
         System.out.println("Powering off...");
     }
@@ -99,29 +101,27 @@ public class Application {
     }
 
     // Create file in directory if needed
-    public static void createFile(Path contactPath) throws IOException {
-        if (Files.notExists(contactPath)) {
-            Files.createFile(contactPath);
+    public static void createFile(Path pathInput) throws IOException {
+        if (Files.notExists(pathInput)) {
+            Files.createFile(pathInput);
         }
     }
 
     // Retrieve contacts from text file
-    public static void getContactsList(Path contactPath) throws IOException {
-        List<String> contactList = Files.readAllLines(contactPath);
+    public static void getContactsList(Path pathInput) throws IOException {
+        List<String> contactList = Files.readAllLines(pathInput);
         for (String contact : contactList) {
             System.out.println(contact);
         }
     }
 
-    public static void addContact(Path contactsPath) throws IOException {
-
-        System.out.println();
+    public static void addContact(Path pathInput) throws IOException {
         System.out.println("Enter new contact first name: ");
-        String first = input.getString();
+        String first = input.nextLine();
         System.out.println("Enter new contact last name: ");
-        String last = input.getString();
-        System.out.println("Enter new contact phone number:\n");
-        String phoneNumber = input.getString();
+        String last = input.nextLine();
+        System.out.println("Enter new contact phone number: ");
+        String phoneNumber = input.nextLine();
         phoneNumber = phoneNumber.replaceAll("[^\\d]", "");
         String phoneNumberFormatted = "";
         if (phoneNumber.length() == 7) {
@@ -132,65 +132,24 @@ public class Application {
 
         Contact newContact = new Contact(first, last, phoneNumberFormatted);
         String formatContact = newContact.getFirstName() + " " + newContact.getLastName() + " | " + newContact.getPhoneNumber() + " |" + System.lineSeparator();
-        Files.writeString(contactsPath, formatContact, StandardOpenOption.APPEND);
-        System.out.println("Contact added...");
+        Files.writeString(pathInput, formatContact, StandardOpenOption.APPEND);
         System.out.println();
-
-//        int numLength = Long.toString(number).length(); // captures the int value of the string length
-//        char[] oldNumArr = Long.toString(number).toCharArray(); // turns number into char array
-//        StringBuilder newNumStr = new StringBuilder(); // used to set a new phone number string with "-"
-//        int firstTac = 0;
-//        int secondTac = 0;
-//
-//        switch (numLength) {
-//            case 7: {
-//                for (int i = 0; i < oldNumArr.length; i++) {
-//                    newNumStr.append(oldNumArr[i]);
-//                    firstTac++;
-//                    if (firstTac == 3) {
-//                        break;
-//                    }
-//                }
-//                newNumStr.append("-");
-//                for (int i = 3; i < oldNumArr.length; i++) {
-//                    newNumStr.append(oldNumArr[i]);
-//                }
-//                contactsMap.put(name, newNumStr.toString());
-//                List<String> test = List.of(name + " | " + newNumStr + " |");
-//                Files.write(contactPath, test, StandardOpenOption.APPEND);
-//            }
-//            case 10: {
-//                for (int i = 0; i < oldNumArr.length; i++) {
-//                    newNumStr.append(oldNumArr[i]);
-//                    firstTac++;
-//                    if (firstTac == 3) {
-//                        break;
-//                    }
-//                }
-//                newNumStr.append("-");
-//                for (int i = 3; i < oldNumArr.length; i++) {
-//                    newNumStr.append(oldNumArr[i]);
-//                    secondTac++;
-//                    if (secondTac == 3) {
-//                        break;
-//                    }
-//                }
-//                newNumStr.append("-");
-//                for (int i = 6; i < oldNumArr.length; i++) {
-//                    newNumStr.append(oldNumArr[i]);
-//                }
-//                contactsMap.put(name, newNumStr.toString());
-//                List<String> test = List.of(name + " | " + newNumStr + " |");
-//                Files.write(contactPath, test, StandardOpenOption.APPEND);
-//            }
-//            default: // for some reason, always defaults WITH proper input.
-//                System.out.println("Loading...");
-//        }
-//
-//        Files.readAllLines(contactPath);
+        System.out.println("Contact added...");
     }
 
+    public static void searchContacts(Path pathInput) throws IOException {
+        List<String> contacts;
+        System.out.println();
+        System.out.println("What is your contact's name?: ");
+        String contact = input.nextLine();
 
+        contacts = Files.readAllLines(pathInput);
+        for (String line : contacts) {
+            if ((line.toLowerCase()).contains((contact.toLowerCase()))) {
+                System.out.println(line);
+            }
+        }
+    }
 
     // Main Menu to application
     public static void Menu() {
