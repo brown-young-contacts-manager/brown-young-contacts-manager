@@ -1,5 +1,3 @@
-import com.sun.source.tree.Tree;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,13 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.TreeMap;
-import util.Input;
 
 // TODO: Refactor switch cases to call methods
 
 public class Application {
-//    static Path contactsPath = Paths.get(directory, contactList);
     static Scanner input = new Scanner(System.in);
+    static List<String> contacts;
 
     public static void runApplication() throws IOException {
 //        Input methodInput = new Input();
@@ -53,29 +50,8 @@ public class Application {
                     searchContacts(contactPath);
                     break;
                 case 4: // DELETE CONTACTS
-//                    System.out.println();
-//                    System.out.println("Enter contact name to delete: ");
-//                    name = scanner.nextLine();
-//                    System.out.println("Are you sure?: [y/n]");
-//                    String confirm = scanner.nextLine();
-//                    if (confirm.equalsIgnoreCase("Y")) {
-//                        System.out.println(Files.readAllLines(contactPath));
-//                    } else {
-//                        Menu();
-//                    }
-//                    contacts = Files.readAllLines(contactPath);
-//
-//                    List<String> newContactsList = new ArrayList<>();
-//
-//
-//                    for (String line : contacts) {
-//
-//                        if (line.contains(name)) {
-//                            continue;
-//                        }
-//                        newContactsList.add(line);
-//                    }
-//                    Files.write(contactPath, newContactsList);
+                    System.out.println();
+                    deleteContact(contactPath);
                     break;
                 case 5: // EXIT
                     System.out.println();
@@ -138,7 +114,6 @@ public class Application {
     }
 
     public static void searchContacts(Path pathInput) throws IOException {
-        List<String> contacts;
         System.out.println();
         System.out.println("What is your contact's name?: ");
         String contact = input.nextLine();
@@ -149,6 +124,32 @@ public class Application {
                 System.out.println(line);
             }
         }
+    }
+
+    public static void deleteContact(Path pathInput) throws IOException {
+        System.out.println();
+        System.out.println("Enter contact name to delete: ");
+        String deleteContact = input.nextLine();
+        System.out.println("Are you sure?: [y/n]");
+        String confirm = input.nextLine();
+        if (confirm.equalsIgnoreCase("Y")) {
+            System.out.println(Files.readAllLines(pathInput));
+        } else {
+            Menu();
+        }
+        contacts = Files.readAllLines(pathInput);
+
+        List<String> newContactsList = new ArrayList<>();
+
+
+        for (String line : contacts) {
+
+            if (line.contains(deleteContact)) {
+                continue;
+            }
+            newContactsList.add(line);
+        }
+        Files.write(pathInput, newContactsList);
     }
 
     // Main Menu to application
