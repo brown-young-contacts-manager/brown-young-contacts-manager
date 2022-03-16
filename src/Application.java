@@ -9,8 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.TreeMap;
+import util.Input;
+
+// TODO: Refactor switch cases to call methods
 
 public class Application {
+//    static Path contactsPath = Paths.get(directory, contactList);
+    static Input input = new Input();
 
     public static void runApplication() throws IOException {
         Scanner scanner = new Scanner(System.in);
@@ -18,14 +23,15 @@ public class Application {
         String directory = "./src/contact/";
         String contactList = "contacts.txt";
         // creating a path to directory and file
-        Path textDirectory = Paths.get(directory);
-        Path textPath = Paths.get(directory, contactList);
+        Path contactDir = Paths.get(directory);
+        Path contactPath = Paths.get(directory, contactList);
         TreeMap<String, String> contactsMap = new TreeMap<>();
         List<String> contacts;
         boolean cont;
 
-        createDirectory(textDirectory);
-        createFile(textPath);
+        createDirectory(contactDir);
+        createFile(contactPath);
+
 
         System.out.println("Welcome to your contacts manager...");
 
@@ -37,104 +43,38 @@ public class Application {
             switch (input) {
                 case 1: // VIEW ALL
                     System.out.println();
-                    getContactsList(textPath);
+                    getContactsList(contactPath);
                     break;
                 case 2: // ADD CONTACT
-                    System.out.println();
-                    System.out.println("Enter new contact name: ");
-                    String name = scanner.nextLine();
-
-                    System.out.printf("Enter %s phone number:\n", name);
-                    long number = scanner.nextLong();
-                    int numLength = Long.toString(number).length(); // captures the int value of the string length
-                    char[] oldNumArr = Long.toString(number).toCharArray(); // turns number into char array
-                    StringBuilder newNumStr = new StringBuilder(); // used to set a new phone number string with "-"
-                    int firstTac = 0;
-                    int secondTac = 0;
-
-                    switch (numLength) {
-                        case 7: {
-                            for (int i = 0; i < oldNumArr.length; i++) {
-                                newNumStr.append(oldNumArr[i]);
-                                firstTac++;
-                                if (firstTac == 3) {
-                                    break;
-                                }
-                            }
-                            newNumStr.append("-");
-                            for (int i = 3; i < oldNumArr.length; i++) {
-                                newNumStr.append(oldNumArr[i]);
-                            }
-                            contactsMap.put(name, newNumStr.toString());
-                            List<String> test = List.of(name + " | " + newNumStr + " |");
-                            Files.write(textPath, test, StandardOpenOption.APPEND);
-                        }
-                        case 10: {
-                            for (int i = 0; i < oldNumArr.length; i++) {
-                                newNumStr.append(oldNumArr[i]);
-                                firstTac++;
-                                if (firstTac == 3) {
-                                    break;
-                                }
-                            }
-                            newNumStr.append("-");
-                            for (int i = 3; i < oldNumArr.length; i++) {
-                                newNumStr.append(oldNumArr[i]);
-                                secondTac++;
-                                if (secondTac == 3) {
-                                    break;
-                                }
-                            }
-                            newNumStr.append("-");
-                            for (int i = 6; i < oldNumArr.length; i++) {
-                                newNumStr.append(oldNumArr[i]);
-                            }
-                            contactsMap.put(name, newNumStr.toString());
-                            List<String> test = List.of(name + " | " + newNumStr + " |");
-                            Files.write(textPath, test, StandardOpenOption.APPEND);
-                        }
-                        default: // for some reason, always defaults WITH proper input.
-                            System.out.println("Loading...");
-                    }
-
-                    Files.readAllLines(textPath);
+                    addContact(contactPath);
                     break;
                 case 3: // SEARCH CONTACTS - NAME ONLY
-                    System.out.println();
-                    System.out.println("What is your contact's name?: ");
-                    name = scanner.nextLine();
-
-                    contacts = Files.readAllLines(textPath);
-                    for (String line : contacts) {
-                        if ((line.toLowerCase()).contains((name.toLowerCase()))) {
-                            System.out.println(line);
-                        }
-                    }
+//                    searchContacts();
                     break;
                 case 4: // DELETE CONTACTS
-                    System.out.println();
-                    System.out.println("Enter contact name to delete: ");
-                    name = scanner.nextLine();
-                    System.out.println("Are you sure?: [y/n]");
-                    String confirm = scanner.nextLine();
-                    if (confirm.equalsIgnoreCase("Y")) {
-                        System.out.println(Files.readAllLines(textPath));
-                    } else {
-                        Menu();
-                    }
-                    contacts = Files.readAllLines(textPath);
-
-                    List<String> newContactsList = new ArrayList<>();
-
-
-                    for (String line : contacts) {
-
-                        if (line.contains(name)) {
-                            continue;
-                        }
-                        newContactsList.add(line);
-                    }
-                    Files.write(textPath, newContactsList);
+//                    System.out.println();
+//                    System.out.println("Enter contact name to delete: ");
+//                    name = scanner.nextLine();
+//                    System.out.println("Are you sure?: [y/n]");
+//                    String confirm = scanner.nextLine();
+//                    if (confirm.equalsIgnoreCase("Y")) {
+//                        System.out.println(Files.readAllLines(contactPath));
+//                    } else {
+//                        Menu();
+//                    }
+//                    contacts = Files.readAllLines(contactPath);
+//
+//                    List<String> newContactsList = new ArrayList<>();
+//
+//
+//                    for (String line : contacts) {
+//
+//                        if (line.contains(name)) {
+//                            continue;
+//                        }
+//                        newContactsList.add(line);
+//                    }
+//                    Files.write(contactPath, newContactsList);
                     break;
                 case 5: // EXIT
                     System.out.println();
@@ -152,26 +92,105 @@ public class Application {
     }
 
     // Create Directory if needed
-    public static void createDirectory(Path textDirectory) throws IOException {
-        if (Files.notExists(textDirectory)) {
-            Files.createDirectories(textDirectory);
+    public static void createDirectory(Path contactDir) throws IOException {
+        if (Files.notExists(contactDir)) {
+            Files.createDirectories(contactDir);
         }
     }
 
     // Create file in directory if needed
-    public static void createFile(Path textPath) throws IOException {
-        if (Files.notExists(textPath)) {
-            Files.createFile(textPath);
+    public static void createFile(Path contactPath) throws IOException {
+        if (Files.notExists(contactPath)) {
+            Files.createFile(contactPath);
         }
     }
 
     // Retrieve contacts from text file
-    public static void getContactsList(Path textPath) throws IOException {
-        List<String> printList = Files.readAllLines(textPath);
-        for (String contact : printList) {
+    public static void getContactsList(Path contactPath) throws IOException {
+        List<String> contactList = Files.readAllLines(contactPath);
+        for (String contact : contactList) {
             System.out.println(contact);
         }
     }
+
+    public static void addContact(Path contactsPath) throws IOException {
+
+        System.out.println();
+        System.out.println("Enter new contact first name: ");
+        String first = input.getString();
+        System.out.println("Enter new contact last name: ");
+        String last = input.getString();
+        System.out.println("Enter new contact phone number:\n");
+        String phoneNumber = input.getString();
+        phoneNumber = phoneNumber.replaceAll("[^\\d]", "");
+        String phoneNumberFormatted = "";
+        if (phoneNumber.length() == 7) {
+            phoneNumberFormatted = phoneNumber.substring(0, 3) + "-" + phoneNumber.substring(3);
+        } else if (phoneNumber.length() == 10) {
+            phoneNumberFormatted = phoneNumber.substring(0, 3) + "-" + phoneNumber.substring(3, 6) + "-" + phoneNumber.substring(6);
+        }
+
+        Contact newContact = new Contact(first, last, phoneNumberFormatted);
+        String formatContact = newContact.getFirstName() + " " + newContact.getLastName() + " | " + newContact.getPhoneNumber() + " |" + System.lineSeparator();
+        Files.writeString(contactsPath, formatContact, StandardOpenOption.APPEND);
+        System.out.println("Contact added...");
+        System.out.println();
+
+//        int numLength = Long.toString(number).length(); // captures the int value of the string length
+//        char[] oldNumArr = Long.toString(number).toCharArray(); // turns number into char array
+//        StringBuilder newNumStr = new StringBuilder(); // used to set a new phone number string with "-"
+//        int firstTac = 0;
+//        int secondTac = 0;
+//
+//        switch (numLength) {
+//            case 7: {
+//                for (int i = 0; i < oldNumArr.length; i++) {
+//                    newNumStr.append(oldNumArr[i]);
+//                    firstTac++;
+//                    if (firstTac == 3) {
+//                        break;
+//                    }
+//                }
+//                newNumStr.append("-");
+//                for (int i = 3; i < oldNumArr.length; i++) {
+//                    newNumStr.append(oldNumArr[i]);
+//                }
+//                contactsMap.put(name, newNumStr.toString());
+//                List<String> test = List.of(name + " | " + newNumStr + " |");
+//                Files.write(contactPath, test, StandardOpenOption.APPEND);
+//            }
+//            case 10: {
+//                for (int i = 0; i < oldNumArr.length; i++) {
+//                    newNumStr.append(oldNumArr[i]);
+//                    firstTac++;
+//                    if (firstTac == 3) {
+//                        break;
+//                    }
+//                }
+//                newNumStr.append("-");
+//                for (int i = 3; i < oldNumArr.length; i++) {
+//                    newNumStr.append(oldNumArr[i]);
+//                    secondTac++;
+//                    if (secondTac == 3) {
+//                        break;
+//                    }
+//                }
+//                newNumStr.append("-");
+//                for (int i = 6; i < oldNumArr.length; i++) {
+//                    newNumStr.append(oldNumArr[i]);
+//                }
+//                contactsMap.put(name, newNumStr.toString());
+//                List<String> test = List.of(name + " | " + newNumStr + " |");
+//                Files.write(contactPath, test, StandardOpenOption.APPEND);
+//            }
+//            default: // for some reason, always defaults WITH proper input.
+//                System.out.println("Loading...");
+//        }
+//
+//        Files.readAllLines(contactPath);
+    }
+
+
 
     // Main Menu to application
     public static void Menu() {
