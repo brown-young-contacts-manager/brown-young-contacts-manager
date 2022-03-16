@@ -85,8 +85,8 @@ public class Application {
 
     // Retrieve contacts from text file
     public static void getContactsList(Path pathInput) throws IOException {
-        List<String> contactList = Files.readAllLines(pathInput);
-        for (String contact : contactList) {
+        contacts = Files.readAllLines(pathInput);
+        for (String contact : contacts) {
             System.out.println(contact);
         }
     }
@@ -98,7 +98,7 @@ public class Application {
         String last = input.nextLine();
         System.out.println("Enter new contact phone number: ");
         String phoneNumber = input.nextLine();
-        phoneNumber = phoneNumber.replaceAll("[^\\d]", "");
+        phoneNumber = phoneNumber.replaceAll("[^\\d]", ""); // regex: any digits 0-9
         String phoneNumberFormatted = "";
         if (phoneNumber.length() == 7) {
             phoneNumberFormatted = phoneNumber.substring(0, 3) + "-" + phoneNumber.substring(3);
@@ -114,7 +114,6 @@ public class Application {
     }
 
     public static void searchContacts(Path pathInput) throws IOException {
-        System.out.println();
         System.out.println("What is your contact's name?: ");
         String contact = input.nextLine();
 
@@ -127,28 +126,19 @@ public class Application {
     }
 
     public static void deleteContact(Path pathInput) throws IOException {
-        System.out.println();
         System.out.println("Enter contact name to delete: ");
         String deleteContact = input.nextLine();
         System.out.println("Are you sure?: [y/n]");
         String confirm = input.nextLine();
         if (confirm.equalsIgnoreCase("Y")) {
             System.out.println(Files.readAllLines(pathInput));
-        } else {
-            Menu();
-        }
+        } else { Menu();}
         contacts = Files.readAllLines(pathInput);
-
         List<String> newContactsList = new ArrayList<>();
 
-
         for (String line : contacts) {
-
-            if (line.contains(deleteContact)) {
-                continue;
-            }
-            newContactsList.add(line);
-        }
+            if (line.contains(deleteContact)) { continue; }
+            newContactsList.add(line); }
         Files.write(pathInput, newContactsList);
     }
 
