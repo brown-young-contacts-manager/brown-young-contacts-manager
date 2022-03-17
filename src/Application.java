@@ -6,28 +6,19 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.TreeMap;
-
-// TODO: Refactor switch cases to call methods
 
 public class Application {
     static Scanner input = new Scanner(System.in);
     static List<String> contacts;
 
     public static void runApplication() throws IOException {
-//        Input methodInput = new Input();
-        // creating directory and file for contact list
         String directory = "./src/contact/";
         String contactList = "contacts.txt";
-        // creating a path to directory and file
         Path contactDir = Paths.get(directory);
         Path contactPath = Paths.get(directory, contactList);
-        TreeMap<String, String> contactsMap = new TreeMap<>();
-        boolean cont;
-
         createDirectory(contactDir);
         createFile(contactPath);
-
+        boolean cont;
 
         System.out.println("Welcome to your contacts manager...");
 
@@ -37,29 +28,31 @@ public class Application {
             int switchInput = input.nextInt();
             input.nextLine();
             switch (switchInput) {
-                case 1: // VIEW ALL
+                case 1 -> { // VIEW ALL
                     System.out.println();
                     getContactsList(contactPath);
-                    break;
-                case 2: // ADD CONTACT
+                }
+                case 2 -> { // ADD CONTACT
                     System.out.println();
                     addContact(contactPath);
-                    break;
-                case 3: // SEARCH CONTACTS - NAME ONLY
+                }
+                case 3 -> { // SEARCH CONTACTS - NAME ONLY
                     System.out.println();
                     searchContacts(contactPath);
-                    break;
-                case 4: // DELETE CONTACTS
+                }
+                case 4 -> { // DELETE CONTACTS
                     System.out.println();
                     deleteContact(contactPath);
-                    break;
-                case 5: // EXIT
+                }
+                case 5 -> { // EXIT
                     System.out.println();
                     System.out.println("Powering off...");
                     return;
-                default:
+                }
+                default -> {
                     System.out.println();
                     System.out.println("Please select a valid option.");
+                }
             }
             System.out.println();
             System.out.println("Do you wish to continue?: [y/n]");
@@ -91,12 +84,13 @@ public class Application {
         }
     }
 
+    // Add contacts to text file
     public static void addContact(Path pathInput) throws IOException {
-        System.out.println("Enter new contact first name: ");
+        System.out.println("Enter new contact First Name: ");
         String first = input.nextLine();
-        System.out.println("Enter new contact last name: ");
+        System.out.println("Enter new contact Last Name: ");
         String last = input.nextLine();
-        System.out.println("Enter new contact phone number: ");
+        System.out.println("Enter new contact Phone Number: ");
         String phoneNumber = input.nextLine();
         phoneNumber = phoneNumber.replaceAll("[^\\d]", ""); // regex: any digits 0-9
         String phoneNumberFormatted = "";
@@ -113,6 +107,7 @@ public class Application {
         System.out.println("Contact added...");
     }
 
+    // Retrieve contact from text file
     public static void searchContacts(Path pathInput) throws IOException {
         System.out.println("What is your contact's name?: ");
         String contact = input.nextLine();
@@ -125,27 +120,40 @@ public class Application {
         }
     }
 
+    // Remove contact from text file
     public static void deleteContact(Path pathInput) throws IOException {
         System.out.println("Enter contact name to delete: ");
         String deleteContact = input.nextLine();
         System.out.println("Are you sure?: [y/n]");
         String confirm = input.nextLine();
         if (confirm.equalsIgnoreCase("Y")) {
-            System.out.println(Files.readAllLines(pathInput));
-        } else { Menu();}
-        contacts = Files.readAllLines(pathInput);
-        List<String> newContactsList = new ArrayList<>();
+            contacts = Files.readAllLines(pathInput);
+            List<String> newContactsList = new ArrayList<>();
 
-        for (String line : contacts) {
-            if (line.contains(deleteContact)) { continue; }
-            newContactsList.add(line); }
-        Files.write(pathInput, newContactsList);
+            for (String line : contacts) {
+                if (line.contains(deleteContact)) {
+                    continue;
+                }
+                newContactsList.add(line);
+            }
+            Files.write(pathInput, newContactsList);
+            System.out.println("Contact deleted...");
+            System.out.println();
+            System.out.println(Files.readAllLines(pathInput));
+        } else {
+            Menu();
+        }
     }
 
-    // Main Menu to application
     public static void Menu() {
-        System.out.print("1. View contacts\n2. Add a new contact\n3. Search a contact by name\n" +
-                "4. Delete an existing contact\n5. Exit\nEnter an option (1, 2, 3, 4 or 5): ");
+        System.out.print(
+                "1. View contacts\n" +
+                        "2. Add a new contact\n" +
+                        "3. Search a contact by name\n" +
+                        "4. Delete an existing contact\n" +
+                        "5. Exit\n" +
+                        "Please selection an option: "
+        );
     }
 
     public static void main(String[] args) throws IOException {
